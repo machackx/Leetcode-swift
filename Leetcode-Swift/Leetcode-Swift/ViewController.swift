@@ -19,7 +19,8 @@ class ViewController: UIViewController {
         a.reverse(508);
         a.isPalindrome(302);
         a.findLongestPalindrome(inputString: "abbaaadd")
-        a.longestPalindromeSimple("abadsijdsqffsqdqsf");
+        a.longestPalindromeSimple("abaaba");
+        a.longestPalindromeON("abaaba")
     }
 
     override func didReceiveMemoryWarning() {

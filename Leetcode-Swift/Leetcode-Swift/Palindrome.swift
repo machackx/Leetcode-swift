@@ -112,7 +112,7 @@ class Palindrome {
         
     }
     
-    // 比findLongestPalindrome方法更节约了空间 算法复杂度O(N2)
+    // 比findLongestPalindrome方法更节约了空间 算法复杂度O(N^2)
     func longestPalindromeSimple (s:String) -> String{
         let n = countElements(s)
         if n==0 {
@@ -132,6 +132,65 @@ class Palindrome {
         }
         println(longestString)
         return longestString
+    }
+    
+    // An O(N) Solution (Manacher’s Algorithm)
+    // http://leetcode.com/2011/11/longest-palindromic-substring-part-ii.html
+    // Transform S into T.
+    // For example, S = "abba", T = "^#a#b#b#a#$".
+    // ^ and $ signs are sentinels appended to each end to avoid bounds checking
+    func preProcess(s:String) -> String {
+        let n = countElements(s)
+        if n==0 {
+            return "^$"
+        }
+        var ret:String = "^"
+        for (var i=0; i<n; i++) {
+            ret += "#" + s[i..<(i+1)]
+        }
+        ret += "#$"
+        
+        return ret
+        
+    }
+    
+    func longestPalindromeON (string:String) -> String {
+        var T:String = preProcess(string)
+        let n = countElements(T)
+        var P = [Int](count: n, repeatedValue: 0)
+        var C = 0
+        var R = 0
+        for (var i=1; i<n-1; i++) {
+            let i_mirror = 2*C-i
+            if R>i {
+                P[i]=min(R-i, P[i_mirror])
+            } else {
+                P[i] = 0
+            }
+            //P[i] = (R>i)? min(R-i, P[i_mirror]):0
+            
+            while (T[i+1+P[i]]==T[i-1-P[i]]) {
+                P[i]++
+            }
+            
+            if (i+P[i] > R){
+                C=i
+                R=i+P[i]
+            }
+        }
+        
+        // Find the maximum element in P.
+        var maxLength = 0
+        var centerIndex = 0
+        for(var i=0; i<n-1; i++) {
+            if (P[i] > maxLength) {
+                maxLength = P[i];
+                centerIndex = i;
+            }
+        }
+        
+        println("result is \(string[((centerIndex - 1 - maxLength)/2)..<maxLength])")
+        return string[((centerIndex - 1 - maxLength)/2)..<maxLength];
     }
     
     init () {}
